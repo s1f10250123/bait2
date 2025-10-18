@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -151,17 +152,19 @@
         let details = "";
 
         denominations.forEach(d => {
-          const num = Number(day.querySelector(`.${d.class}`).value) || 0;
+          const input = day.querySelector(`.${d.class}`);
+          let num = Number(input.value) || 0;  // 空欄は0に変換
+          input.value = num;                    // 入力欄にも0を表示
           const subtotal = num * d.value;
           totals[d.class] += num;
           dayTotal += subtotal;
-          if (num > 0) {
-            details += `${d.label}: ${num}枚 (${subtotal.toLocaleString()}円)<br>`;
-          }
+
+          // ここを修正：ゼロも表示
+          details += `${d.label}: ${num}枚 (${subtotal.toLocaleString()}円)<br>`;
         });
 
         resultHTML += `<div class="subresult">
-          <b>${i + 1}日目</b><br>${details || "入力なし"}<b>合計:</b> ${dayTotal.toLocaleString()}円
+          <b>${i + 1}日目</b><br>${details}<b>合計:</b> ${dayTotal.toLocaleString()}円
         </div><hr>`;
         grandTotal += dayTotal;
       });
@@ -170,9 +173,7 @@
       let summary = "";
       denominations.forEach(d => {
         const totalPieces = totals[d.class];
-        if (totalPieces > 0) {
-          summary += `${d.label} × ${totalPieces}枚 = ${(totalPieces * d.value).toLocaleString()}円<br>`;
-        }
+        summary += `${d.label} × ${totalPieces}枚 = ${(totalPieces * d.value).toLocaleString()}円<br>`;
       });
 
       document.getElementById("result").innerHTML = `
